@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 load_dotenv()
 headers = {"User-Agent": "Mozilla/5.0"}
 
-conn = pymysql.connect(host='127.0.0.1', user='root', password=os.environ.get("DB_PASSWORD"), db='PokeDexDB', charset='utf8mb4')
+conn = pymysql.connect(host='127.0.0.1', user='root', password=os.environ.get("DB_PASSWORD"), db='PokedexDB', charset='utf8mb4')
 cur = conn.cursor()
 cur.execute("CREATE TABLE `pokemon` (`num_nat` INT NOT NULL, `name_kor` CHAR(20) NOT NULL, `name_jap` CHAR(20) NOT NULL, `name_eng` CHAR(30) NOT NULL, `base_stat` JSON NOT NULL, `types` JSON NOT NULL, `classification` CHAR(15) NOT NULL, `color` CHAR(10) NOT NULL, `height` DOUBLE NOT NULL, `weight` DOUBLE NOT NULL, `male_rate` DOUBLE NOT NULL, PRIMARY KEY (`num_nat`));")
 
