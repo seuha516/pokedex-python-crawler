@@ -121,8 +121,9 @@ for i in range(493):
         div_type1 = div.select_one('table > tbody > tr:nth-child(2) > td:nth-child(1) > div > span > a:nth-child(2) > span')
         div_type2 = div.select_one('table > tbody > tr:nth-child(2) > td:nth-child(1) > div > span > a:nth-child(3) > span')
         types = {"type1": div_type1.get_text()}
-        if div_type2 is not None:
+        if div_type2 is not None and div_type1.get_text() != div_type2.get_text():
             types["type2"] = div_type2.get_text()
+
         classification = div.select_one('table > tbody > tr:nth-child(2) > td:nth-child(2)').get_text().strip()
         color = div.select_one('table > tbody > tr:nth-child(11) > td:nth-child(1) > span')['style'][11:]
         height = float(div.select_one('table > tbody > tr:nth-child(13) > td:nth-child(1)').get_text().strip()[:-1])
