@@ -11,7 +11,7 @@ headers = {"User-Agent": "Mozilla/5.0"}
 
 conn = pymysql.connect(host='127.0.0.1', user='root', password=os.environ.get("DB_PASSWORD"), db='PokedexDB', charset='utf8mb4')
 cur = conn.cursor()
-cur.execute("CREATE TABLE `pokemon` (`num_nat` INT NOT NULL, `name_kor` CHAR(20) NOT NULL, `name_jap` CHAR(20) NOT NULL, `name_eng` CHAR(30) NOT NULL, `base_stat` JSON NOT NULL, `types` JSON NOT NULL, `classification` CHAR(15) NOT NULL, `color` CHAR(10) NOT NULL, `height` DOUBLE NOT NULL, `weight` DOUBLE NOT NULL, `male_rate` DOUBLE NOT NULL, PRIMARY KEY (`num_nat`));")
+cur.execute("CREATE TABLE `pokemon` (`num_nat` INT NOT NULL, `name_kor` CHAR(20) NOT NULL, `name_jap` CHAR(20) NOT NULL, `name_eng` CHAR(30) NOT NULL, `base_stat` JSON NOT NULL, `types` JSON NOT NULL, `classification` CHAR(15) NOT NULL, `color` CHAR(10) NOT NULL, `height` DOUBLE NOT NULL, `weight` DOUBLE NOT NULL, `male_rate` DOUBLE NOT NULL, `explanation` VARCHAR(255) NOT NULL, PRIMARY KEY (`num_nat`));")
 
 pokemon_list = []
 
@@ -136,6 +136,13 @@ for i in range(493):
             div_rate_percent_index = div_rate.find('%')
             male_rate = float(div_rate[3:div_rate_percent_index]) / 100
 
+        explanation_list = soup.select('div > table')
+        explanation = ""
+        for k in range(len(explanation_list)):
+            if str(explanation_list[k]).find("다이아몬드") > 0:
+                explanation = explanation_list[k].select_one('tbody > tr > td > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td').get_text().strip()
+                break
+
         pokemon_list[i]["name_jap"] = name_jap
         pokemon_list[i]["name_eng"] = name_eng
         pokemon_list[i]["types"] = types
@@ -144,13 +151,14 @@ for i in range(493):
         pokemon_list[i]["height"] = height
         pokemon_list[i]["weight"] = weight
         pokemon_list[i]["male_rate"] = male_rate
+        pokemon_list[i]["explanation"] = explanation
     else:
         print('error', res.status_code)
 
 
 for i in range(len(pokemon_list)):
     p = pokemon_list[i]
-    curStr = "INSERT INTO `pokemon` VALUES (%d, \"%s\", \"%s\", \"%s\", \'%s\', \'%s\', \"%s\", \"%s\", %s, %s, %s)" % ((i + 1), p["name_kor"], p["name_jap"], p["name_eng"], json.dumps(p["base_stat"]), json.dumps(p["types"], ensure_ascii=False), p["classification"], p["color"], p["height"], p["weight"], p["male_rate"])
+    curStr = "INSERT INTO `pokemon` VALUES (%d, \"%s\", \"%s\", \"%s\", \'%s\', \'%s\', \"%s\", \"%s\", %s, %s, %s, \"%s\")" % ((i + 1), p["name_kor"], p["name_jap"], p["name_eng"], json.dumps(p["base_stat"]), json.dumps(p["types"], ensure_ascii=False), p["classification"], p["color"], p["height"], p["weight"], p["male_rate"], p["explanation"])
     cur.execute(curStr)
 conn.commit()
 conn.close()
